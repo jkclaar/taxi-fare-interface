@@ -1,7 +1,7 @@
 const algoliaPlacesApiAppId = 'plU4N8HG6QWK';
 const algoliaPlacesApiKey = '1131438afb49f60a48ed468c5af189b8';
 const mapboxApiToken = 'pk.eyJ1Ijoia3Jva3JvYiIsImEiOiJja2YzcmcyNDkwNXVpMnRtZGwxb2MzNWtvIn0.69leM_6Roh26Ju7Lqb2pwQ';
-const taxiFareApiUrl = 'http://localhost:8000/predict';
+const taxiFareApiUrl = 'https://taxifare.lewagon.ai/predict';
 
 const displayMap = (start, stop) => {
   mapboxgl.accessToken = mapboxApiToken;
@@ -17,7 +17,7 @@ const displayMap = (start, stop) => {
 
     var req = new XMLHttpRequest();
     req.open('GET', url, true);
-    req.onload = function() {
+    req.onload = function () {
       var json = JSON.parse(req.response);
       var data = json.routes[0];
       var route = data.geometry.coordinates;
@@ -63,7 +63,7 @@ const displayMap = (start, stop) => {
     req.send();
   }
   if (start && stop) {
-    map.on('load', function() {
+    map.on('load', function () {
       // make an initial directions request that
       // starts and ends at the same location
       getRoute(start);
@@ -94,44 +94,44 @@ const displayMap = (start, stop) => {
       // this is where the code from the next step will go
       var coords = stop
       var end = {
-          type: 'FeatureCollection',
-          features: [{
-            type: 'Feature',
-            properties: {},
-            geometry: {
-              type: 'Point',
-              coordinates: coords
-            }
+        type: 'FeatureCollection',
+        features: [{
+          type: 'Feature',
+          properties: {},
+          geometry: {
+            type: 'Point',
+            coordinates: coords
           }
-          ]
-        };
-        if (map.getLayer('end')) {
-          map.getSource('end').setData(end);
-        } else {
-          map.addLayer({
-            id: 'end',
-            type: 'circle',
-            source: {
-              type: 'geojson',
-              data: {
-                type: 'FeatureCollection',
-                features: [{
-                  type: 'Feature',
-                  properties: {},
-                  geometry: {
-                    type: 'Point',
-                    coordinates: coords
-                  }
-                }]
-              }
-            },
-            paint: {
-              'circle-radius': 10,
-              'circle-color': '#f30'
-            }
-          });
         }
-        getRoute(coords);
+        ]
+      };
+      if (map.getLayer('end')) {
+        map.getSource('end').setData(end);
+      } else {
+        map.addLayer({
+          id: 'end',
+          type: 'circle',
+          source: {
+            type: 'geojson',
+            data: {
+              type: 'FeatureCollection',
+              features: [{
+                type: 'Feature',
+                properties: {},
+                geometry: {
+                  type: 'Point',
+                  coordinates: coords
+                }
+              }]
+            }
+          },
+          paint: {
+            'circle-radius': 10,
+            'circle-color': '#f30'
+          }
+        });
+      }
+      getRoute(coords);
     });
   }
 };
@@ -202,16 +202,16 @@ const predict = () => {
           'Content-Type': 'application/json'
         }
       })
-      .then(response => response.json())
-      .then(data => {
-        document.getElementById('fare').classList.remove('d-none');
-        const fareResult = document.getElementById('predicted-fare');
-        const fare = Math.round(data['prediction'] * 100) / 100
-        fareResult.innerText = `$${fare}`;
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('fare').classList.remove('d-none');
+          const fareResult = document.getElementById('predicted-fare');
+          const fare = Math.round(data['prediction'] * 100) / 100
+          fareResult.innerText = `$${fare}`;
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
     });
   }
 };
